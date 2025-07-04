@@ -14,4 +14,4 @@ This PowerShell script displays essential information about the current user and
 To run this script directly from PowerShell:
 
 ```powershell
-iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/display-info.ps1' | iex
+iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/display-details.ps1' | iex
