@@ -13,7 +13,6 @@ This PowerShell script displays essential information about the current user and
 
 To run this script directly from PowerShell:
 
-```powershell
 iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/display-details.ps1' | iex
 
 # ⚠️ Clean User Folders Script (PowerShell)
@@ -38,5 +37,4 @@ This script **permanently deletes all files and folders** inside these directori
 
 ## 📥 How to Run (One-Liner)
 
-```powershell
 iwr 'https://raw.githubusercontent.com/yourusername/repo/main/clean-user-folders.ps1' | iex
