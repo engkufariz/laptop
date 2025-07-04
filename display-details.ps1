@@ -27,8 +27,14 @@ Write-Host "Model			: $Model"
 $Serial = (Get-WmiObject Win32_BIOS).SerialNumber
 Write-Host "Serial Number		: $Serial"
 
-# Get the primary non-APIPA IP address
-$IP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch "^169\.254\." } | Select-Object -First 1).IPAddress
+# Get Ethernet IPv4 address (non-APIPA)
+$IP = Get-NetIPAddress -AddressFamily IPv4 |
+      Where-Object {
+          $_.InterfaceAlias -match "Ethernet" -and
+          $_.IPAddress -notmatch "^169\.254\." -and
+          $_.PrefixOrigin -ne "WellKnown"
+      } |
+      Select-Object -First 1 -ExpandProperty IPAddress
 Write-Host "IP Address		: $IP"
 Write-Host ""
 # Ping test to Azure server
