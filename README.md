@@ -37,4 +37,5 @@ This script **permanently deletes all files and folders** inside these directori
 
 ## 📥 How to Run (One-Liner)
 
+```powershell
 iwr 'https://raw.githubusercontent.com/yourusername/repo/main/clean-user-folders.ps1' | iex
