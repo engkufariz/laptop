@@ -1,20 +1,25 @@
-# ⚠️ Clean User Folders Script (PowerShell)
+# ⚠️ Clean User Folders PowerShell Script
 
-This script **permanently deletes all files and folders** inside these directories for the **current Windows user**:
+This PowerShell script permanently deletes **all files and subfolders** from the following user folders:
 
-- Downloads  
-- Documents  
-- Pictures  
-- Videos  
+- Downloads
+- Documents
+- Pictures
+- Videos
 - Music
+
+> 🛑 **USE WITH EXTREME CAUTION!**  
+> This script **cannot be undone** and is intended for IT professionals or advanced users.
 
 ---
 
-## ⚠️ WARNING
+## 📜 Features
 
-> ⚠️ This action is irreversible. Use this script only when you're 100% sure.
->
-> Every folder is individually confirmed before deletion.
+- Prompts for `"YES"` confirmation before proceeding
+- Excludes hidden and system files by default
+- Logs all deleted file paths and sizes to a log file (`delete-log.txt`)
+- Calculates and displays total space freed for each folder
+- Provides clean, user-friendly output with color coding
 
 ---
 
