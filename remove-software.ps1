@@ -31,32 +31,19 @@ function Uninstall-Software($apps) {
         $displayName = $app.DisplayName
         $uninstallCmd = $app.UninstallString
 
-        Write-Host "`n[+] Uninstalling: $displayName"
+        Write-Host "`n[+] Launching uninstaller for: $displayName"
 
         try {
-            # Adjust uninstall string for silent mode
-            if ($uninstallCmd -match "msiexec\.exe") {
-                if ($uninstallCmd -notmatch "/quiet") {
-                    $uninstallCmd += " /quiet /norestart"
-                }
+            # Handle uninstall command (msiexec or EXE)
+            if ($uninstallCmd -match '^".+"$') {
                 Start-Process -FilePath "cmd.exe" -ArgumentList "/c $uninstallCmd" -Wait -NoNewWindow
             } else {
-                # Some EXE uninstallers may support /S or /silent
-                if ($uninstallCmd -notmatch "/S") {
-                    $uninstallCmd += " /S"
-                }
-
-                # Handle quoted paths
-                if ($uninstallCmd -notmatch '^".+"$') {
-                    $uninstallCmd = "`"$uninstallCmd`""
-                }
-
-                Start-Process -FilePath "cmd.exe" -ArgumentList "/c $uninstallCmd" -Wait -NoNewWindow
+                Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$uninstallCmd`"" -Wait -NoNewWindow
             }
 
-            Write-Host "[✔] Uninstalled: $displayName"
+            Write-Host "[✔] Uninstaller launched: $displayName"
         } catch {
-            Write-Warning "[!] Failed to uninstall $displayName - $_"
+            Write-Warning "[!] Failed to launch uninstaller for $displayName - $_"
         }
     }
 }
