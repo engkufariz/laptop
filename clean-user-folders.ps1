@@ -46,7 +46,7 @@ foreach ($folder in $folders) {
                 Add-Content -Path $logPath -Value "Total Freed Space: $freedMB MB"
 
             } catch {
-                Write-Host "Error deleting contents in $folder: $_" -ForegroundColor Red
+                Write-Host "Error deleting contents in ${folder}: $_" -ForegroundColor Red
                 Add-Content -Path $logPath -Value "Error: $_"
             }
         } else {
