@@ -1,64 +1,45 @@
-# ⚠️ DANGER ZONE: Deletes local accounts and user folders
-# Run this script as Administrator
-
-Write-Host "⚠️ This script will permanently DELETE local user accounts and their profile folders in C:\Users EXCEPT for:" -ForegroundColor Red
-Write-Host "   - Administrator" -ForegroundColor Yellow
-Write-Host "   - user-PC" -ForegroundColor Yellow
-Write-Host "   - itadmin" -ForegroundColor Yellow
+# CAUTION MESSAGE
+Write-Host "⚠️  WARNING: This script will permanently delete user folders and local accounts in C:\Users except for Administrator, user-PC, and itadmin." -ForegroundColor Red
+Write-Host "Use this script with caution!" -ForegroundColor Yellow
 Write-Host ""
-$confirm = Read-Host "Type YES to confirm and proceed"
+$confirm = Read-Host "Type YES to proceed"
+
 if ($confirm -ne "YES") {
-    Write-Host "Cancelled by user. Exiting..." -ForegroundColor Gray
+    Write-Host "Operation cancelled." -ForegroundColor Cyan
     exit
 }
 
-# Define exclusions
-$excluded = @("Administrator", "user-PC", "itadmin")
-$basePath = "C:\Users"
-$logFile = "$env:USERPROFILE\remove-users-and-folders.log"
+# Define excluded usernames
+$excludedUsers = @("Administrator", "user-PC", "itadmin")
 
-"--- Deletion started: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ---`r`n" | Out-File $logFile -Encoding UTF8 -Append
+# Get all user folders in C:\Users
+$userFolders = Get-ChildItem "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
 
-# Get all local users
-$localUsers = Get-LocalUser
+foreach ($folder in $userFolders) {
+    $username = $folder.Name
+    $userFolder = $folder.FullName
 
-foreach ($user in $localUsers) {
-    $username = $user.Name
-
-    if ($excluded -contains $username) {
-        Write-Host "⏭️ Skipping account: $username" -ForegroundColor DarkGray
-        continue
-    }
-
+    # Attempt to remove local user account
     try {
-        # Remove local user account
+        $localUser = Get-LocalUser -Name $username -ErrorAction Stop
         Remove-LocalUser -Name $username -ErrorAction Stop
-        Write-Host "🧹 Removed account: $username" -ForegroundColor Green
-        "[ACCOUNT DELETED] $username" | Out-File $logFile -Append
+        Write-Host "✅ Local account removed: $username" -ForegroundColor Green
     } catch {
-        Write-Host "❌ Failed to remove account $username: $_" -ForegroundColor Red
-        "[ERROR] Failed to delete account $username - $_" | Out-File $logFile -Append
-        continue
+        $errorMessage = $_.Exception.Message
+        Write-Host "❌ Failed to remove account $($username): $($errorMessage)" -ForegroundColor Red
     }
 
-    # Attempt to delete user folder
-    $userFolder = Join-Path $basePath $username
-    if (Test-Path $userFolder) {
-        try {
-            $folderSize = (Get-ChildItem -Recurse -Force -ErrorAction SilentlyContinue -Path $userFolder | Measure-Object -Property Length -Sum).Sum
-            $sizeMB = [math]::Round($folderSize / 1MB, 2)
-
-            Remove-Item -Path $userFolder -Recurse -Force -ErrorAction Stop
-            Write-Host "🗑️ Deleted folder: $userFolder ($sizeMB MB)" -ForegroundColor Cyan
-            "[FOLDER DELETED] $userFolder - $sizeMB MB" | Out-File $logFile -Append
-        } catch {
-            Write-Host "❌ Error deleting folder $userFolder: $_" -ForegroundColor Red
-            "[ERROR] Failed to delete folder $userFolder - $_" | Out-File $logFile -Append
-        }
-    } else {
-        Write-Host "⚠️ Folder not found: $userFolder" -ForegroundColor DarkGray
+    # Attempt to delete the user folder
+    try {
+        Remove-Item -Path $userFolder -Recurse -Force -ErrorAction Stop
+        Write-Host "✅ Deleted folder: $userFolder" -ForegroundColor Green
+    } catch {
+        $errorMessage = $_.Exception.Message
+        Write-Host "❌ Error deleting folder $($userFolder): $($errorMessage)" -ForegroundColor Red
     }
+
+    Write-Host ""
 }
 
-Write-Host ""
-Write-Host "✅ DONE! Log saved to $logFile" -ForegroundColor Green
+Write-Host "✅ Script completed." -ForegroundColor Cyan
+Read-Host "Press ENTER to exit"
