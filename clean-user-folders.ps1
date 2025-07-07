@@ -1,14 +1,11 @@
-# === Initialization ===
-$logPath = "$env:USERPROFILE\cleanup_log_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
-"Cleanup started on $(Get-Date)" | Out-File -FilePath $logPath
-
+# Display caution message
 Write-Host "⚠️  CAUTION!! This script will permanently delete ALL files and folders in the following locations:" -ForegroundColor Red
 Write-Host "Downloads, Documents, Pictures, Videos, Music" -ForegroundColor Yellow
 Write-Host "USE WITH EXTREME CAUTION!" -ForegroundColor Red
 Write-Host ""
-Read-Host "Press Enter to continue"
+Read-Host "Press ENTER to continue..."
 
-# List of user folders
+# Define target folders
 $folders = @(
     "$env:USERPROFILE\Downloads",
     "$env:USERPROFILE\Documents",
@@ -17,48 +14,24 @@ $folders = @(
     "$env:USERPROFILE\Music"
 )
 
+# Loop through each folder and delete its contents
 foreach ($folder in $folders) {
     Write-Host ""
-    Write-Host "Target folder: $folder" -ForegroundColor Cyan
-    Add-Content -Path $logPath -Value "`n===== Folder: $folder ====="
+    Write-Host "Start deleting all files and folders in: $folder" -ForegroundColor Cyan
 
     if (Test-Path $folder) {
-        $confirmation = Read-Host "Do you want to delete all contents in this folder? (Y/N)"
-        if ($confirmation -match '^[Yy]$') {
-            try {
-                $items = Get-ChildItem -Path $folder -Recurse -Force -ErrorAction Stop
-                $totalSize = 0
-
-                foreach ($item in $items) {
-                    if ($item.PSIsContainer -eq $false) {
-                        $sizeMB = [math]::Round($item.Length / 1MB, 2)
-                        $totalSize += $item.Length
-                        Add-Content -Path $logPath -Value "$($item.FullName) - ${sizeMB}MB"
-                    } else {
-                        Add-Content -Path $logPath -Value "$($item.FullName)\ (folder)"
-                    }
-                }
-
-                # Delete the items
-                $items | Remove-Item -Recurse -Force -ErrorAction Stop
-                $freedMB = [math]::Round($totalSize / 1MB, 2)
-                Write-Host "Deleted all contents in $folder (Freed: $freedMB MB)" -ForegroundColor Green
-                Add-Content -Path $logPath -Value "Total Freed Space: $freedMB MB"
-
-            } catch {
-                Write-Host "Error deleting contents in ${folder}: $_" -ForegroundColor Red
-                Add-Content -Path $logPath -Value "Error: $_"
-            }
-        } else {
-            Write-Host "Skipped $folder" -ForegroundColor DarkGray
-            Add-Content -Path $logPath -Value "Skipped by user."
+        try {
+            # Delete contents only, not the folder itself
+            Get-ChildItem -Path $folder -Force -Recurse | Remove-Item -Force -Recurse -ErrorAction Stop
+            Write-Host "Deleted contents of: $folder" -ForegroundColor Green
+        } catch {
+            Write-Host "Error deleting contents in ${folder}: $_" -ForegroundColor Red
         }
     } else {
         Write-Host "Folder not found: $folder" -ForegroundColor DarkGray
-        Add-Content -Path $logPath -Value "Folder not found."
     }
 }
 
+# End message
 Write-Host ""
-Write-Host "DONE! Log saved to: $logPath" -ForegroundColor Cyan
-Read-Host "Press ENTER to exit"
+Read-Host "DONE! Press ENTER to exit."
