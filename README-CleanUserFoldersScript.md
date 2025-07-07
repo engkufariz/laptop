@@ -18,7 +18,7 @@ This script **permanently deletes all files and folders** inside these directori
 
 ---
 
-## 📥 How to Run (One-Liner)
+## 📥 How to Run (One-Liner)### 🔹 One-liner (no download needed):
 
 ```powershell
 iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/clean-user-folders.ps1' | iex
