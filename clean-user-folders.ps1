@@ -46,4 +46,19 @@ foreach ($folder in $folders) {
                 Add-Content -Path $logPath -Value "Total Freed Space: $freedMB MB"
 
             } catch {
-                W
+                Write-Host "Error deleting contents in $folder: $_" -ForegroundColor Red
+                Add-Content -Path $logPath -Value "Error: $_"
+            }
+        } else {
+            Write-Host "Skipped $folder" -ForegroundColor DarkGray
+            Add-Content -Path $logPath -Value "Skipped by user."
+        }
+    } else {
+        Write-Host "Folder not found: $folder" -ForegroundColor DarkGray
+        Add-Content -Path $logPath -Value "Folder not found."
+    }
+}
+
+Write-Host ""
+Write-Host "DONE! Log saved to: $logPath" -ForegroundColor Cyan
+Read-Host "Press ENTER to exit"
