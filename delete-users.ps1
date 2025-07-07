@@ -15,7 +15,8 @@ $excludedUsers = @("Administrator", "user-PC", "itadmin")
 
 # Prepare log file
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$logPath = Join-Path -Path $PSScriptRoot -ChildPath "DeletedUserFolders-$timestamp.log"
+$logDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$logPath = Join-Path -Path $logDirectory -ChildPath "DeletedUserFolders-$timestamp.log"
 Add-Content -Path $logPath -Value "=== Folder Deletion Log ($timestamp) ===`r`n"
 
 # Get user folders in C:\Users (excluding listed)
