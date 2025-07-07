@@ -1,53 +1,51 @@
-# CAUTION MESSAGE
-Write-Host "⚠️  WARNING: This script will permanently delete user folders in C:\Users" -ForegroundColor Red
-Write-Host "Excluding: Administrator, user-PC, and itadmin" -ForegroundColor Yellow
-Write-Host "User accounts will NOT be removed." -ForegroundColor Cyan
-Write-Host ""
-$confirm = Read-Host "Type YES to proceed"
-
-if ($confirm -ne "YES") {
-    Write-Host "Operation cancelled." -ForegroundColor Cyan
-    exit
-}
-
-# Excluded usernames
+# Define users to exclude
 $excludedUsers = @("Administrator", "user-PC", "itadmin")
 
-# Prepare log file
+# Get timestamp and prepare log path
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $logDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $logPath = Join-Path -Path $logDirectory -ChildPath "DeletedUserFolders-$timestamp.log"
 Add-Content -Path $logPath -Value "=== Folder Deletion Log ($timestamp) ===`r`n"
 
-# Get user folders in C:\Users (excluding listed)
-$userFolders = Get-ChildItem "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
-
-foreach ($folder in $userFolders) {
-    $userFolder = $folder.FullName
-    $folderSize = 0
-
-    # Calculate folder size (in MB)
-    try {
-        $folderSize = (Get-ChildItem -Path $userFolder -Recurse -Force -ErrorAction SilentlyContinue |
-                       Measure-Object -Property Length -Sum).Sum / 1MB
-        $folderSize = [math]::Round($folderSize, 2)
-    } catch {
-        $folderSize = "Unknown"
-    }
-
-    # Try deleting
-    try {
-        Remove-Item -Path $userFolder -Recurse -Force -ErrorAction Stop
-        Write-Host "✅ Deleted folder: $($userFolder) ($folderSize MB)" -ForegroundColor Green
-        Add-Content -Path $logPath -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") - Deleted: $userFolder ($folderSize MB)"
-    } catch {
-        $errorMessage = $_.Exception.Message
-        Write-Host "❌ Error deleting folder $($userFolder): $($errorMessage)" -ForegroundColor Red
-        Add-Content -Path $logPath -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") - FAILED: $userFolder - $errorMessage"
-    }
-
-    Write-Host ""
+# Get all user folders in C:\Users
+$userFolders = Get-ChildItem -Path "C:\Users" -Directory | Where-Object {
+    $excludedUsers -notcontains $_.Name
 }
 
-Write-Host "✅ Folder deletion complete. Log saved to:`n$logPath" -ForegroundColor Cyan
-Read-Host "Press ENTER to exit"
+# Display all folders and sizes before deletion
+Write-Host "📋 The following folders will be scanned for deletion:" -ForegroundColor Yellow
+foreach ($folder in $userFolders) {
+    try {
+        $size = (Get-ChildItem -Path $folder.FullName -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+        $sizeMB = [math]::Round($size / 1MB, 2)
+        Write-Host "$($folder.Name) - $sizeMB MB" -ForegroundColor Cyan
+    } catch {
+        Write-Host "⚠️  Error reading size of $($folder.FullName)" -ForegroundColor Red
+    }
+}
+
+# Confirm deletion
+$confirm = Read-Host "`nType YES to delete all the above folders"
+if ($confirm -ne "YES") {
+    Write-Host "❌ Operation cancelled." -ForegroundColor Red
+    exit
+}
+
+# Delete each folder and log the action
+foreach ($folder in $userFolders) {
+    $folderPath = $folder.FullName
+    try {
+        $size = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+        $sizeMB = [math]::Round($size / 1MB, 2)
+
+        Remove-Item -Path $folderPath -Recurse -Force -ErrorAction Stop
+        Write-Host "✅ Deleted: $folderPath ($sizeMB MB)" -ForegroundColor Green
+        Add-Content -Path $logPath -Value "Deleted: $folderPath - $sizeMB MB"
+    } catch {
+        $errorMessage = $_.Exception.Message
+        Write-Host "❌ Error deleting $folderPath: $errorMessage" -ForegroundColor Red
+        Add-Content -Path $logPath -Value "ERROR deleting $folderPath: $errorMessage"
+    }
+}
+
+Write-Host "`n✔️  All done. Log saved to: $logPath" -ForegroundColor Cyan
