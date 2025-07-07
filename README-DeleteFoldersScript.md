@@ -26,4 +26,4 @@ This PowerShell script permanently deletes **all files and subfolders** from the
 ### 🔹 One-liner (no download needed):
 
 ```powershell
-iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/clean-user-folders.ps1' | iex
+iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/delete-folders.ps1' | iex
