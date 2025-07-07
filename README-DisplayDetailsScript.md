@@ -9,7 +9,7 @@ This PowerShell script displays essential information about the current user and
 
 ---
 
-## 📥 Usage (Quick Run Without Download)
+### 🔹 One-liner (no download needed):
 
 To run this script directly from PowerShell:
 
