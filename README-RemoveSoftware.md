@@ -14,3 +14,10 @@ Unlike silent uninstallers, this version runs each software’s native uninstall
 - Supports both MSI and EXE uninstallers
 
 ---
+
+### 🔹 One-liner (no download needed):
+
+To run this script directly from PowerShell:
+
+```powershell
+iwr 'https://raw.githubusercontent.com/engkufariz/laptop/main/remove-software.ps1' | iex
