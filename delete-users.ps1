@@ -1,58 +1,67 @@
-# Display caution
-Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
-Write-Host "    - Administrator" -ForegroundColor Yellow
-Write-Host "    - user-PC" -ForegroundColor Yellow
-Write-Host "    - itadmin" -ForegroundColor Yellow
+# PowerShell Script: delete-user-folders.ps1
+
+# Display warning
+Write-Host "⚠️  This script will DELETE user folders under C:\Users (excluding Administrator, itadmin, and user-PC)" -ForegroundColor Red
 Write-Host ""
-Write-Host "📁 Folders marked for deletion:" -ForegroundColor Cyan
+Read-Host "Type YES to continue"
 
-# Define excluded usernames
-$excludedUsers = @('Administrator', 'user-PC', 'itadmin')
+# Exclusions
+$excludedUsers = @("Administrator", "itadmin", "user-PC")
 
-# Get user profile folders
+# Set log path
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$logPath = "C:\Logs\DeletedUserFolders-$timestamp.log"
+New-Item -ItemType File -Path $logPath -Force | Out-Null
+
+# Get user folders
 $userFolders = Get-ChildItem -Path "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
 
-# Exit if no folders found
-if ($userFolders.Count -eq 0) {
-    Write-Host "No folders found for deletion." -ForegroundColor Yellow
-    exit
-}
+# Display folders
+Write-Host "`n📂 The following folders will be deleted:" -ForegroundColor Yellow
+$userFolders | ForEach-Object { Write-Host $_.FullName -ForegroundColor Cyan }
 
-# Display folders to be deleted
-foreach ($folder in $userFolders) {
-    Write-Host " - $($folder.FullName)"
-}
-
-# Confirm deletion
+# Confirm
 $confirm = Read-Host "`nType YES to confirm deletion"
 if ($confirm -ne "YES") {
-    Write-Host "Aborted by user." -ForegroundColor Yellow
+    Write-Host "❌ Operation cancelled." -ForegroundColor Red
     exit
 }
 
-# Set log file path
-$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$logPath = "C:\Users\Public\delete_folders_log_$timestamp.txt"
-
-# Delete folders and log
+# Loop through and delete
 foreach ($folder in $userFolders) {
     $folderPath = $folder.FullName
-    try {
-        # Calculate folder size
-        $size = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
-        $sizeMB = "{0:N2}" -f ($size / 1MB)
+    Write-Host "`nProcessing: $folderPath" -ForegroundColor White
 
-        # Delete folder
+    # Take ownership and grant permissions
+    try {
+        Start-Process -FilePath "takeown.exe" -ArgumentList "/F `"$folderPath`" /R /D Y" -NoNewWindow -Wait
+        Start-Process -FilePath "icacls.exe" -ArgumentList "`"$folderPath`" /grant administrators:F /T /C" -NoNewWindow -Wait
+    } catch {
+        $errorMsg = $_.Exception.Message
+        Write-Host "❌ Failed to set permissions on $folderPath: $errorMsg" -ForegroundColor Red
+        Add-Content -Path $logPath -Value "[ERROR] Failed to set permissions on $folderPath: $errorMsg"
+        continue
+    }
+
+    # Get folder size
+    try {
+        $sizeBytes = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+        $sizeMB = "{0:N2}" -f ($sizeBytes / 1MB)
+    } catch {
+        $sizeMB = "Unknown"
+    }
+
+    # Delete folder
+    try {
         Remove-Item -Path $folderPath -Recurse -Force -ErrorAction Stop
         Write-Host "✅ Deleted: $folderPath ($sizeMB MB)" -ForegroundColor Green
-        Add-Content -Path $logPath -Value "DELETED: ${folderPath} - ${sizeMB} MB"
-    }
-    catch {
-        $errorMessage = $_.Exception.Message
-        Write-Host "❌ Error deleting ${folderPath}: ${errorMessage}" -ForegroundColor Red
-        Add-Content -Path $logPath -Value "ERROR deleting ${folderPath}: ${errorMessage}"
+        Add-Content -Path $logPath -Value "[DELETED] $folderPath - $sizeMB MB"
+    } catch {
+        $errorMsg = $_.Exception.Message
+        Write-Host "❌ Error deleting $folderPath: $errorMsg" -ForegroundColor Red
+        Add-Content -Path $logPath -Value "[ERROR] Failed to delete $folderPath: $errorMsg"
     }
 }
 
-Write-Host "`n📝 Log saved to: $logPath" -ForegroundColor Cyan
-Read-Host "`nDONE! Press ENTER to exit"
+Write-Host "`n✔️  All done. Log saved to: $logPath" -ForegroundColor Green
+Pause
