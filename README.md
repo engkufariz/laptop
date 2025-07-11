@@ -37,30 +37,13 @@ These tools help identify network issues quickly with minimal user input.
 
 ---
 
-## 🖼️ Screenshots
+## 🚀 How to Run the Script via PowerShell
 
-> Place your screenshots inside an `images/` folder in the repo.
+Copy and paste below command (no need to download anything)
 
-### 🔷 Main Menu
-
-![Main Menu](images/main-menu.png)
-
-### 🔷 Network Tools Menu
-
-![Network Tools](images/network-tools.png)
-
----
-
-## 🚀 How to Use
-
-### ✅ Run the Script
-
-1. Download the `.ps1` file
-2. Right-click and select **"Run with PowerShell"**
-3. If script execution is blocked, use this command:
-   ```powershell
-   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-   ```
+```
+iwr 'https://tinyurl.com/tcmy-toolkit' | iex
+```
 
 > 🔒 For full functionality (e.g., uninstalling apps or flushing DNS), run PowerShell as **Administrator**.
 
@@ -90,25 +73,17 @@ These tools help identify network issues quickly with minimal user input.
 ```
 PowerShell-Toolkit/
 │
-├── toolkit.ps1              # Main PowerShell script
+├── tcmy-toolkit.ps1              # Main PowerShell script
 ├── README.md                # This file
 ├── LICENSE                  # MIT License
-└── images/
-    ├── main-menu.png
-    └── network-tools.png
+
 ```
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## ✍️ Author
 
-Developed by **Engku Fariz**  
+Developed by **Engku Ahmad Fariz**  
 📧 For support, bug reports, or improvements — please open a GitHub issue.
 
 ---
