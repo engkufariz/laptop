@@ -1,15 +1,16 @@
 function Show-Menu {
     Clear-Host
-    Write-Host "============================================="
-    Write-Host "		TCMY TOOLKIT V1.0"-ForegroundColor Cyan
-    Write-Host "	created by Engku Ahmad Fariz"-ForegroundColor Cyan
-    Write-Host "============================================="
-    Write-Host ""
-    Write-Host "`n1. Show User + Laptop Info"
+	Write-Host "============================================="
+	Write-Host "				TCMY TOOLKIT				" -ForegroundColor Cyan
+	Write-Host "		created by Engku Ahmad Fariz		" -ForegroundColor Cyan
+	Write-Host "============================================="
+	Write-Host ""
+	Write-Host "`n1. Show User + Laptop Info"
     Write-Host "2. Delete All Users Folders in C:\Users"
     Write-Host "3. Delete Personal Folders (Downloads, Documents, etc.)"
     Write-Host "4. Uninstall Installed Software (select manually)"
-    Write-Host "5. Exit`n"
+	Write-Host "5. Enable/Disable Seconds In Taskbar Clock"
+    Write-Host "6. Exit`n"
 }
 function Run-UserLaptopInfo {
 	Clear-Host
@@ -261,16 +262,68 @@ function Run-UninstallSoftware {
 	Uninstall-Software $selectedApps
  	Write-Host ""
 }
+function Run-EnableDisableSeconds {
+		$running = $true
+	function Show-Menu {
+		
+		Clear-Host
+		Write-Host "==============================================="
+		Write-Host "   TASKBAR CLOCK SECONDS TOGGLE (v1.0)" -ForegroundColor Cyan
+		Write-Host "==============================================="
+		# Display script information
+		Write-Host "TOGGLE SECONDS - This script will enable or disable the seconds on the taskbar clock."
+		Write-Host ""
+		Write-Host "Select the option as shown below:"
+		Write-Host ""
+		Write-Host "1. Enable Seconds on Taskbar Clock"
+		Write-Host "2. Disable Seconds on Taskbar Clock"
+		Write-Host "0. Return to main menu"
+		Write-Host ""
+	}
+	function Enable-Seconds {
+		# Enabling the seconds
+		Write-Host ""
+		Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Value 1 -Force
+		Write-Host "`nDONE! For Windows 10, please restart the laptop to verify the changes.`n" -ForegroundColor Green
+		Write-Host ""
+		Read-Host -Prompt "Press ENTER to return to menu"
+	}
+	function Disable-Seconds {
+		# Disabling the seconds
+		Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Value 0 -Force
+		Write-Host "`nDONE! For Windows 10, please restart the laptop to verify the changes.`n" -ForegroundColor Green
+		Write-Host ""
+		Read-Host -Prompt "Press ENTER to return to menu"
+	}
+	#Show the options 0/1/2
+	while ($running) {
+		Show-Menu
+		$choice = Read-Host "Enter your choice (1/2/0)"
+		switch ($choice) {
+			"1" { Enable-Seconds }
+			"2" { Disable-Seconds }
+			"0" { 
+				Write-Host "Exiting..." -ForegroundColor Cyan
+				$running = $false
+			}
+			default { 
+				Write-Host "Invalid option. Please choose 1, 2, or 0." -ForegroundColor Red
+				Start-Sleep -Seconds 2
+			}
+		}
+	}
+}	
 $runMenu = $true
 do {
     Show-Menu
-    $choice = Read-Host "`nEnter your choice (1-5)"
+    $choice = Read-Host "`nEnter your choice (1-6)"
     switch ($choice) {
         "1" { Run-UserLaptopInfo }
         "2" { Run-DeletePersonalFolders }
         "3" { Run-DeleteUserFolders }
         "4" { Run-UninstallSoftware }
-        "5" { Write-Host "Exiting..."; $runMenu = $false }
+		"5" { Run-EnableDisableSeconds }
+        "6" { Write-Host "Exiting..."; $runMenu = $false }
         default { Write-Host "Invalid selection. Try again." -ForegroundColor Yellow }
     }
 } while ($runMenu)
