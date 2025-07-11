@@ -1,45 +1,47 @@
-Clear-Host
-Write-Host "============================================="
-Write-Host "          POWERFUL CLEAN-UP TOOLKIT          " -ForegroundColor Cyan
-Write-Host "============================================="
-
 function Show-Menu {
-    Write-Host "`n1. Show User + Laptop Info"
-    Write-Host "2. Delete ALL User Profiles (excluding safe list)"
+    Clear-Host
+	Write-Host "============================================="
+	Write-Host "          TCMY TOOLKIT          " -ForegroundColor Cyan
+	Write-Host "============================================="
+	Write-Host ""
+	Write-Host "`n1. Show User + Laptop Info"
+    Write-Host "2. Delete All Users Folders in C:\Users"
     Write-Host "3. Delete Personal Folders (Downloads, Documents, etc.)"
     Write-Host "4. Uninstall Installed Software (select manually)"
     Write-Host "5. Exit`n"
 }
-
 function Run-UserLaptopInfo {
+	Clear-Host
     Write-Host "==============================================="
 	Write-Host "   USER + LAPTOP INFO SCRIPT (v1.0)" -ForegroundColor Cyan
 	Write-Host "==============================================="
 	# Display script information
 	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address). Then performing ping test to Azure AD (10.32.240.20)"
 	Write-Host ""
-	Read-Host "Press enter to confirm and proceed..."
+	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
+	if ($confirm -ne "YES") {
+		Write-Host "Operation cancelled by user." -ForegroundColor Red
+		Start-Sleep -Seconds 1
+		Clear-Host
+		return  # returns to menu without exiting the whole script
+	}
+	Write-Host ""
 	Write-Host "Start retrieving all details:"
 	Write-Host ""
 	# Get user ID
 	$UserID = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 	Write-Host "Login ID		: $UserID"
-
 	# Get user full name
 	$User = ([ADSI]"WinNT://$env:COMPUTERNAME/$env:USERNAME,user")
 	$FullName = $User.FullName
 	Write-Host "Full Name		: $FullName"
-
 	# Get system details
 	$HostName = $env:COMPUTERNAME
 	Write-Host "Hostname		: $HostName"
-
 	$Model = (Get-WmiObject -Class Win32_ComputerSystem).Model
 	Write-Host "Model			: $Model"
-
 	$Serial = (Get-WmiObject Win32_BIOS).SerialNumber
 	Write-Host "Serial Number	: $Serial"
-
 	# Get Ethernet IPv4 address (non-APIPA)
 	$IP = Get-NetIPAddress -AddressFamily IPv4 |
 		  Where-Object {
@@ -54,80 +56,11 @@ function Run-UserLaptopInfo {
 	Write-Host "Start ping test to DNS Address (10.32.240.20)"
 	Test-Connection -ComputerName 10.32.240.20 -Count 4
 	Write-Host ""
-	Read-Host "Press Enter to exit"
+	Read-Host "Press Enter to return to menu"
 }
-
-function Run-DeleteUserProfiles {
-	Write-Host "==============================================="
-	Write-Host "   DELETE USERS FOLDERS (v1.0)" -ForegroundColor Cyan
-	Write-Host "==============================================="
-	# Display caution
-	Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
-	Write-Host "    - Administrator" -ForegroundColor Yellow
-	Write-Host "    - user-PC" -ForegroundColor Yellow
-	Write-Host "    - itadmin" -ForegroundColor Yellow
-	Write-Host ""
-	$confirm = Read-Host "Type YES to confirm and proceed..."
-	if ($confirm -ne "YES") {
-		Write-Host "Operation cancelled by user." -ForegroundColor Red
-		exit
-	}
-	Write-Host "📁 Folders marked for deletion:" -ForegroundColor Cyan
-
-	# Define excluded usernames
-	$excludedUsers = @('Administrator', 'user-PC', 'itadmin')
-
-	# Get user profile folders
-	$userFolders = Get-ChildItem -Path "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
-
-	# Exit if no folders found
-	if ($userFolders.Count -eq 0) {
-		Write-Host "No folders found for deletion." -ForegroundColor Yellow
-		exit
-	}
-
-	# Display folders to be deleted
-	foreach ($folder in $userFolders) {
-		Write-Host " - $($folder.FullName)"
-	}
-
-	# Confirm deletion
-	$confirm = Read-Host "`nType YES to confirm deletion"
-	if ($confirm -ne "YES") {
-		Write-Host "Aborted by user." -ForegroundColor Yellow
-		exit
-	}
-
-	# Set log file path
-	$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-	$logPath = "C:\Users\Public\delete_folders_log_$timestamp.txt"
-
-	# Delete folders and log
-	foreach ($folder in $userFolders) {
-		$folderPath = $folder.FullName
-		try {
-			# Calculate folder size
-			$size = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
-			$sizeMB = "{0:N2}" -f ($size / 1MB)
-
-			# Delete folder
-			Remove-Item -Path $folderPath -Recurse -Force -ErrorAction Stop
-			Write-Host "✅ Deleted: $folderPath ($sizeMB MB)" -ForegroundColor Green
-			Add-Content -Path $logPath -Value "DELETED: ${folderPath} - ${sizeMB} MB"
-		}
-		catch {
-			$errorMessage = $_.Exception.Message
-			Write-Host "❌ Error deleting ${folderPath}: ${errorMessage}" -ForegroundColor Red
-			Add-Content -Path $logPath -Value "ERROR deleting ${folderPath}: ${errorMessage}"
-		}
-	}
-
-	Write-Host "`n📝 Log saved to: $logPath" -ForegroundColor Cyan
-	Read-Host "`nDONE! Press ENTER to exit"
-}
-
 function Run-DeletePersonalFolders {
-    Write-Host "==============================================="
+	Clear-Host
+	Write-Host "==============================================="
 	Write-Host "   DELETE FILES AND FOLDERS (v1.0)" -ForegroundColor Cyan
 	Write-Host "==============================================="
 	# Display script information# Display caution message
@@ -135,12 +68,14 @@ function Run-DeletePersonalFolders {
 	Write-Host "Downloads, Documents, Pictures, Videos, Music" -ForegroundColor Yellow
 	Write-Host "USE WITH EXTREME CAUTION!" -ForegroundColor Red
 	Write-Host ""
-	$confirm = Read-Host "Type YES to confirm and proceed..."
+	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
 	if ($confirm -ne "YES") {
 		Write-Host "Operation cancelled by user." -ForegroundColor Red
-		exit
+		Start-Sleep -Seconds 1
+		Clear-Host
+		return  # returns to menu without exiting the whole script
 	}
-
+	Write-Host ""
 	# Define target folders
 	$folders = @(
 		"$env:USERPROFILE\Downloads",
@@ -149,11 +84,9 @@ function Run-DeletePersonalFolders {
 		"$env:USERPROFILE\Videos",
 		"$env:USERPROFILE\Music"
 	)
-
 	# Prepare log file
 	$logFile = "$env:USERPROFILE\delete-log.txt"
 	"[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Deletion started`r`n" | Out-File -FilePath $logFile -Encoding UTF8 -Append
-
 	# Loop through each folder and delete its contents
 	foreach ($folder in $folders) {
 		Write-Host ""
@@ -173,11 +106,11 @@ function Run-DeletePersonalFolders {
 
 				$deletedFiles | Remove-Item -Force -Recurse -ErrorAction Stop
 				Write-Host "✅ Deleted contents of: $folder" -ForegroundColor Green
-				"Total Freed from $folder: $([math]::Round($totalSize / 1MB, 2)) MB`r`n" | Out-File -FilePath $logFile -Append -Encoding UTF8
+				"Total Freed from ${folder}: $([math]::Round($totalSize / 1MB, 2)) MB`r`n" | Out-File -FilePath $logFile -Append -Encoding UTF8
 
 			} catch {
 				$errorMsg = $_.Exception.Message
-				Write-Host "❌ Error deleting contents in $folder: $errorMsg" -ForegroundColor Red
+				Write-Host "❌ Error deleting contents in ${folder}: $errorMsg" -ForegroundColor Red
 				"[ERROR] $folder - $errorMsg`r`n" | Out-File -FilePath $logFile -Append -Encoding UTF8
 			}
 		} else {
@@ -185,29 +118,93 @@ function Run-DeletePersonalFolders {
 			"[NOT FOUND] $folder`r`n" | Out-File -FilePath $logFile -Append -Encoding UTF8
 		}
 	}
-
 	# End message
 	Write-Host ""
 	Write-Host "DONE! Deletion process completed. Log saved to: $logFile" -ForegroundColor Cyan
-	Read-Host "Press ENTER to exit"
+	Read-Host "Press Enter to return to menu"
 }
+function Run-DeleteUserFolders {
+	Clear-Host
+	Write-Host "==============================================="
+	Write-Host "   DELETE USERS FOLDERS (v1.0)" -ForegroundColor Cyan
+	Write-Host "==============================================="
+	# Display caution
+	Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
+	Write-Host "    - Administrator" -ForegroundColor Yellow
+	Write-Host "    - user-PC" -ForegroundColor Yellow
+	Write-Host "    - itadmin" -ForegroundColor Yellow
+	Write-Host ""
+	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
+	if ($confirm -ne "YES") {
+		Write-Host "Operation cancelled by user." -ForegroundColor Red
+		Start-Sleep -Seconds 1
+		Clear-Host
+		return  # returns to menu without exiting the whole script
+	}
+	Write-Host ""
+	Write-Host "📁 Folders marked for deletion:" -ForegroundColor Cyan
+	# Define excluded usernames
+	$excludedUsers = @('Administrator', 'user-PC', 'itadmin')
+	# Get user profile folders
+	$userFolders = Get-ChildItem -Path "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
+	# Exit if no folders found
+	if ($userFolders.Count -eq 0) {
+		Write-Host "No folders found for deletion." -ForegroundColor Yellow
+		exit
+	}
+	# Display folders to be deleted
+	foreach ($folder in $userFolders) {
+		Write-Host " - $($folder.FullName)"
+	}
+	# Confirm deletion
+	$confirm = Read-Host "`nType YES to confirm deletion"
+	if ($confirm -ne "YES") {
+		Write-Host "Aborted by user." -ForegroundColor Yellow
+		exit
+	}
+	# Set log file path
+	$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+	$logPath = "C:\Users\Public\delete_folders_log_$timestamp.txt"
+	# Delete folders and log
+	foreach ($folder in $userFolders) {
+		$folderPath = $folder.FullName
+		try {
+			# Calculate folder size
+			$size = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+			$sizeMB = "{0:N2}" -f ($size / 1MB)
 
+			# Delete folder
+			Remove-Item -Path $folderPath -Recurse -Force -ErrorAction Stop
+			Write-Host "✅ Deleted: $folderPath ($sizeMB MB)" -ForegroundColor Green
+			Add-Content -Path $logPath -Value "DELETED: ${folderPath} - ${sizeMB} MB"
+		}
+		catch {
+			$errorMessage = $_.Exception.Message
+			Write-Host "❌ Error deleting ${folderPath}: ${errorMessage}" -ForegroundColor Red
+			Add-Content -Path $logPath -Value "ERROR deleting ${folderPath}: ${errorMessage}"
+		}
+	}
+	Write-Host "`n📝 Log saved to: $logPath" -ForegroundColor Cyan
+	Read-Host "Press Enter to return to menu"
+}
 function Run-UninstallSoftware {
+	Clear-Host
 	Write-Host "==============================================="
 	Write-Host "   REMOVE INSTALLED SOFTWARE (v1.0)" -ForegroundColor Cyan
 	Write-Host "==============================================="
 	# Display script information
 	Write-Host "REMOVE INSTALLED SOFTWARE - This script will display all installed software and user need to choose which software to be uninstalled (batch)."
 	Write-Host ""
-	$confirm = Read-Host "Type YES to confirm and proceed..."
+	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
 	if ($confirm -ne "YES") {
 		Write-Host "Operation cancelled by user." -ForegroundColor Red
-		exit
+		Start-Sleep -Seconds 1
+		Clear-Host
+		return  # returns to menu without exiting the whole script
 	}
 	Write-Host ""
 	Write-Host "Start retrieving all details:"
 	# Run as Administrator
-
 	function Get-InstalledSoftware {
 		$regPaths = @(
 			"HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
@@ -221,26 +218,21 @@ function Run-UninstallSoftware {
 		}
 		return $softwareList | Sort-Object DisplayName -Unique
 	}
-
 	function Select-SoftwareToUninstall($softwareList) {
 		$softwareList | ForEach-Object -Begin { $i = 1 } -Process {
 			Write-Host "$i. $($_.DisplayName)"
 			$_ | Add-Member -MemberType NoteProperty -Name Index -Value $i
 			$i++
 		}
-
 		$selection = Read-Host "`nEnter the number(s) of software to uninstall (comma-separated)"
 		$indexes = $selection -split "," | ForEach-Object { $_.Trim() -as [int] }
 		return $softwareList | Where-Object { $indexes -contains $_.Index }
 	}
-
 	function Uninstall-Software($apps) {
 		foreach ($app in $apps) {
 			$displayName = $app.DisplayName
 			$uninstallCmd = $app.UninstallString
-
 			Write-Host "`n[+] Launching uninstaller for: $displayName"
-
 			try {
 				# Handle uninstall command (msiexec or EXE)
 				if ($uninstallCmd -match '^".+"$') {
@@ -248,42 +240,36 @@ function Run-UninstallSoftware {
 				} else {
 					Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$uninstallCmd`"" -Wait -NoNewWindow
 				}
-
 				Write-Host "[✔] Uninstaller launched: $displayName"
 			} catch {
 				Write-Warning "[!] Failed to launch uninstaller for $displayName - $_"
 			}
 		}
 	}
-
 	# --- Main Execution ---
-
 	$softwareList = Get-InstalledSoftware
 
 	if ($softwareList.Count -eq 0) {
 		Write-Host "No uninstallable software found." -ForegroundColor Yellow
 		exit
 	}
-
 	$selectedApps = Select-SoftwareToUninstall $softwareList
-
 	if ($selectedApps.Count -eq 0) {
 		Write-Host "No software selected. Exiting." -ForegroundColor Yellow
 		exit
 	}
-
 	Uninstall-Software $selectedApps
 }
-
+$runMenu = $true
 do {
     Show-Menu
     $choice = Read-Host "`nEnter your choice (1-5)"
     switch ($choice) {
         "1" { Run-UserLaptopInfo }
-        "2" { Run-DeleteUserProfiles }
-        "3" { Run-DeletePersonalFolders }
+        "2" { Run-DeletePersonalFolders }
+        "3" { Run-DeleteUserFolders }
         "4" { Run-UninstallSoftware }
-        "5" { Write-Host "Exiting..."; break }
+        "5" { Write-Host "Exiting..."; $runMenu = $false }
         default { Write-Host "Invalid selection. Try again." -ForegroundColor Yellow }
     }
-} while ($true)
+} while ($runMenu)
