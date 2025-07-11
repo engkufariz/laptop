@@ -1,9 +1,18 @@
+Clear-Host
+Write-Host "==============================================="
+Write-Host "   DELETE USERS FOLDERS (v1.0)" -ForegroundColor Cyan
+Write-Host "==============================================="
 # Display caution
 Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
 Write-Host "    - Administrator" -ForegroundColor Yellow
 Write-Host "    - user-PC" -ForegroundColor Yellow
 Write-Host "    - itadmin" -ForegroundColor Yellow
 Write-Host ""
+$confirm = Read-Host "Type YES to confirm and proceed..."
+if ($confirm -ne "YES") {
+    Write-Host "Operation cancelled by user." -ForegroundColor Red
+    exit
+}
 Write-Host "📁 Folders marked for deletion:" -ForegroundColor Cyan
 
 # Define excluded usernames
