@@ -1,7 +1,7 @@
 function Show-Menu {
     Clear-Host
 	Write-Host "===================================================="
-	Write-Host "	TCMY TOOLKIT - created by Engku Ahmad Fariz	" -ForegroundColor Cyan
+	Write-Host "		TCMY TOOLKIT - created by Fariz		"	-ForegroundColor Cyan
 	Write-Host "===================================================="
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
