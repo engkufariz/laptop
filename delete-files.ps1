@@ -1,9 +1,13 @@
-# Display caution message
+Clear-Host
+Write-Host "==============================================="
+Write-Host "   DELETE FILES AND FOLDERS (v1.0)" -ForegroundColor Cyan
+Write-Host "==============================================="
+# Display script information# Display caution message
 Write-Host "⚠️  CAUTION!! This script will permanently delete ALL files and folders in the following locations:" -ForegroundColor Red
 Write-Host "Downloads, Documents, Pictures, Videos, Music" -ForegroundColor Yellow
 Write-Host "USE WITH EXTREME CAUTION!" -ForegroundColor Red
 Write-Host ""
-$confirm = Read-Host "Type YES to confirm and proceed"
+$confirm = Read-Host "Type YES to confirm and proceed..."
 if ($confirm -ne "YES") {
     Write-Host "Operation cancelled by user." -ForegroundColor Red
     exit
