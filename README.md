@@ -21,8 +21,11 @@ A PowerShell-based utility script designed to simplify **system maintenance**, *
 ## 📌 Future Update
 
 ```
-System-related command
-Disk-related command
+1. Categorize the command:
+  -all delete commands are  put in the Clean-up selection
+2. Add a few new commands:
+  -system-related command
+  -disk-related command
 ```
 ---
 
