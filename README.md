@@ -23,7 +23,7 @@ A PowerShell-based utility script designed to simplify **system maintenance**, *
 - **Adapter Status** – Check if network interfaces are up/down
 - **IP Config** – Get current IP address, gateway, and DNS
 - **Ping & Traceroute** – Custom or default to 8.8.8.8
-- **FlushDNS / Renew IP** – Clear cached entries and refresh IP
+- **FlushDNS / RegisterDNS / ReleaseIP / Renew IP** – Clear cached entries and refresh IP
 
 ---
 
@@ -47,6 +47,8 @@ PowerShell-Toolkit/
 ├── LICENSE                  # MIT License
 
 ```
+---
+
 ## 🚀 How to Run the Script via PowerShell
 
 Copy and paste below command (no need to download anything)
