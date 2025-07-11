@@ -1,11 +1,11 @@
 function Show-Menu {
     Clear-Host
-	Write-Host "============================================"
-	Write-Host "			TCMY TOOLKIT V1.0"-ForegroundColor Cyan
-	Write-Host "		created by Engku Ahmad Fariz"-ForegroundColor Cyan
-	Write-Host "============================================"
-	Write-Host ""
-	Write-Host "`n1. Show User + Laptop Info"
+    Write-Host "============================================="
+    Write-Host "		TCMY TOOLKIT V1.0"-ForegroundColor Cyan
+    Write-Host "	created by Engku Ahmad Fariz"-ForegroundColor Cyan
+    Write-Host "============================================="
+    Write-Host ""
+    Write-Host "`n1. Show User + Laptop Info"
     Write-Host "2. Delete All Users Folders in C:\Users"
     Write-Host "3. Delete Personal Folders (Downloads, Documents, etc.)"
     Write-Host "4. Uninstall Installed Software (select manually)"
