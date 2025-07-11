@@ -84,30 +84,30 @@ function Run-NetworkTools {
 			"1" {
 				Write-Host "`n[1] Network Adapter Status" -ForegroundColor Yellow
 				Get-NetAdapter | Format-Table Name, Status, LinkSpeed, MacAddress -AutoSize
-				Write-Host ""
-				Read-Host -Prompt "Press ENTER to return to menu"
+				Read-Host -Prompt "DONE! Press ENTER to return to menu"
 			}
 			"2" {
 				Write-Host "`n[2] IP Configuration (IPv4)" -ForegroundColor Yellow
 				Get-NetIPAddress -AddressFamily IPv4 | Format-Table InterfaceAlias, IPAddress, PrefixLength
-				Write-Host ""
 				Read-Host -Prompt "DONE! Press ENTER to return to menu"
 			}
 			"3" {
 				Write-Host "`n[3] Default Gateway" -ForegroundColor Yellow
+				Write-Host ""
 				$gateway = Get-NetRoute -DestinationPrefix "0.0.0.0/0" | Select-Object -First 1 -ExpandProperty NextHop
 				if ($gateway) {
 					Write-Host "Default Gateway: $gateway"
 					Write-Host ""
-					Read-Host -Prompt "Press ENTER to return to menu"
+					Read-Host -Prompt "DONE! Press ENTER to return to menu"
 				} else {
 					Write-Host "No default gateway found!" -ForegroundColor Red
 					Write-Host ""
-					Read-Host -Prompt "DONE! Press ENTER to return to menu"
+					Read-Host -Prompt "Press ENTER to return to menu"
 				}
 			}
 			"4" {
 				Write-Host "`n[4] DNS Resolution Test (google.com)" -ForegroundColor Yellow
+				Write-Host ""
 				try {
 					$resolved = Resolve-DnsName google.com -ErrorAction Stop
 					Write-Host "Resolved IP(s):" -ForegroundColor Green
@@ -117,11 +117,12 @@ function Run-NetworkTools {
 				} catch {
 					Write-Host "DNS resolution failed!" -ForegroundColor Red
 					Write-Host ""
-					Read-Host -Prompt "DONE! Press ENTER to return to menu"
+					Read-Host -Prompt "Press ENTER to return to menu"
 				}
 			}
 			"5" {
 				Write-Host "`n[5] Ping Test" -ForegroundColor Yellow
+				Write-Host ""
 				$target = Read-Host "Enter host/IP to ping (default: 8.8.8.8)"
 				if ([string]::IsNullOrWhiteSpace($target)) { $target = "8.8.8.8" }
 				Test-Connection -ComputerName $target -Count 4
@@ -130,6 +131,7 @@ function Run-NetworkTools {
 			}
 			"6" {
 				Write-Host "`n[6] Traceroute" -ForegroundColor Yellow
+				Write-Host ""
 				$traceTarget = Read-Host "Enter host/IP for traceroute (default: 8.8.8.8)"
 				if ([string]::IsNullOrWhiteSpace($traceTarget)) { $traceTarget = "8.8.8.8" }
 				tracert $traceTarget
@@ -138,6 +140,7 @@ function Run-NetworkTools {
 			}
 			"7" {
 				Write-Host "`n[7] Performing Full Network Reset (FlushDNS + RegisterDNS + ReleaseIP + RenewIP)..." -ForegroundColor Yellow
+				Write-Host ""
 				ipconfig /flushdns
 				ipconfig /registerdns
 				ipconfig /release
@@ -156,8 +159,6 @@ function Run-NetworkTools {
 			}
 		}
 		if ($choice -ne "0") {
-			Write-Host ""
-			Write-Host "`nPress ENTER to return to menu..."
 			[void][System.Console]::ReadLine()
 		}
 	} while ($choice -ne "0")
