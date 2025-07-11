@@ -18,6 +18,14 @@ A PowerShell-based utility script designed to simplify **system maintenance**, *
 ```
 ---
 
+## 📌 Future Update
+
+```
+System-related command
+Disk-related command
+```
+---
+
 ## 📡 Network Tools Summary
 
 - **Adapter Status** – Check if network interfaces are up/down
@@ -40,9 +48,9 @@ A PowerShell-based utility script designed to simplify **system maintenance**, *
 ## 📁 Project Structure
 
 ```
-PowerShell-Toolkit/
+PowerShell-TCMY-Toolkit/
 │
-├── tcmy-toolkit.ps1              # Main PowerShell script
+├── tcmy-toolkit.ps1         # Main PowerShell script
 ├── README.md                # This file
 ├── LICENSE                  # MIT License
 
