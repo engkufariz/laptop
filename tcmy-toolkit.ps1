@@ -1,7 +1,8 @@
 function Show-Menu {
     Clear-Host
 	Write-Host "============================================="
-	Write-Host "          TCMY TOOLKIT          " -ForegroundColor Cyan
+	Write-Host "				TCMY TOOLKIT				" -ForegroundColor Cyan
+	Write-Host "		created by Engku Ahmad Fariz		" -ForegroundColor Cyan
 	Write-Host "============================================="
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
@@ -63,7 +64,7 @@ function Run-DeletePersonalFolders {
 	Write-Host "==============================================="
 	Write-Host "   DELETE FILES AND FOLDERS (v1.0)" -ForegroundColor Cyan
 	Write-Host "==============================================="
-	# Display script information# Display caution message
+	# Display script information
 	Write-Host "⚠️  CAUTION!! This script will permanently delete ALL files and folders in the following locations:" -ForegroundColor Red
 	Write-Host "Downloads, Documents, Pictures, Videos, Music" -ForegroundColor Yellow
 	Write-Host "USE WITH EXTREME CAUTION!" -ForegroundColor Red
@@ -118,7 +119,6 @@ function Run-DeletePersonalFolders {
 			"[NOT FOUND] $folder`r`n" | Out-File -FilePath $logFile -Append -Encoding UTF8
 		}
 	}
-	# End message
 	Write-Host ""
 	Write-Host "DONE! Deletion process completed. Log saved to: $logFile" -ForegroundColor Cyan
  	Write-Host ""
@@ -129,7 +129,7 @@ function Run-DeleteUserFolders {
 	Write-Host "==============================================="
 	Write-Host "   DELETE USERS FOLDERS (v1.0)" -ForegroundColor Cyan
 	Write-Host "==============================================="
-	# Display caution
+	# Display script information
 	Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
 	Write-Host "    - Administrator" -ForegroundColor Yellow
 	Write-Host "    - user-PC" -ForegroundColor Yellow
@@ -144,7 +144,7 @@ function Run-DeleteUserFolders {
 	}
 	Write-Host ""
 	Write-Host "📁 Folders marked for deletion:" -ForegroundColor Cyan
-	# Define excluded usernames
+	# Define excluded user
 	$excludedUsers = @('Administrator', 'user-PC', 'itadmin')
 	# Get user profile folders
 	$userFolders = Get-ChildItem -Path "C:\Users" -Directory | Where-Object { $excludedUsers -notcontains $_.Name }
@@ -173,7 +173,6 @@ function Run-DeleteUserFolders {
 			# Calculate folder size
 			$size = (Get-ChildItem -Path $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
 			$sizeMB = "{0:N2}" -f ($size / 1MB)
-
 			# Delete folder
 			Remove-Item -Path $folderPath -Recurse -Force -ErrorAction Stop
 			Write-Host "✅ Deleted: $folderPath ($sizeMB MB)" -ForegroundColor Green
@@ -248,7 +247,7 @@ function Run-UninstallSoftware {
 			}
 		}
 	}
-	# --- Main Execution ---
+	# Run uninstall process
 	$softwareList = Get-InstalledSoftware
 	if ($softwareList.Count -eq 0) {
 		Write-Host "No uninstallable software found." -ForegroundColor Yellow
