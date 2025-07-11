@@ -1,21 +1,22 @@
 function Show-Menu {
     Clear-Host
-	Write-Host "===================================================="
-	Write-Host "		TCMY TOOLKIT - created by Fariz		"	-ForegroundColor Cyan
-	Write-Host "===================================================="
+	Write-Host "============================================================"
+	Write-Host "		TCMY TOOLKIT - created by Fariz			"	-ForegroundColor Cyan
+	Write-Host "============================================================"
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
-    Write-Host "2. Delete All Users Folders in C:\Users"
-    Write-Host "3. Delete Personal Folders (Downloads, Documents, etc.)"
-    Write-Host "4. Uninstall Installed Software (select manually)"
-	Write-Host "5. Enable/Disable Seconds In Taskbar Clock"
-    Write-Host "6. Exit`n"
+	Write-Host "2. Basic Network Troubleshooting Tools"
+    Write-Host "3. Delete All Users Folders in C:\Users"
+    Write-Host "4. Delete Personal Folders (Downloads, Documents, etc.)"
+    Write-Host "5. Uninstall Installed Software (select manually)"
+	Write-Host "6. Toggle Seconds In Taskbar Clock"
+    Write-Host "0. Exit`n"
 }
 function Run-UserLaptopInfo {
 	Clear-Host
-    Write-Host "==============================================="
-	Write-Host "   USER + LAPTOP INFO SCRIPT (v1.0)" -ForegroundColor Cyan
-	Write-Host "==============================================="
+    Write-Host "================================="
+	Write-Host "1. USER + LAPTOP INFO SCRIPT v1.0" -ForegroundColor Cyan
+	Write-Host "================================="
 	# Display script information
 	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address). Then performing ping test to Azure AD (10.32.240.20)"
 	Write-Host ""
@@ -59,11 +60,113 @@ function Run-UserLaptopInfo {
 	Write-Host ""
 	Read-Host "Press Enter to return to menu"
 }
+function Run-NetworkTools {
+	function Show-Menu {
+		Clear-Host
+		Write-Host "=========================================="
+		Write-Host "2. BASIC NETWORK TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
+		Write-Host "=========================================="
+		Write-Host ""
+		Write-Host "1. Check Network Adapter Status"
+		Write-Host "2. View IP Configuration"
+		Write-Host "3. Check Default Gateway"
+		Write-Host "4. DNS Resolution Test"
+		Write-Host "5. Ping Test (custom or 8.8.8.8)"
+		Write-Host "6. Traceroute Test (custom or 8.8.8.8)"
+		Write-Host "7. Perform All Maintenance Tasks (FlushDNS + RegisterDNS + ReleaseIP + RenewIP)"
+		Write-Host "0. Return To Main Menu"
+		Write-Host ""
+	}
+	do {
+		Show-Menu
+		$choice = Read-Host "Select an option [0-8]"
+		switch ($choice) {
+			"1" {
+				Write-Host "`n[1] Network Adapter Status" -ForegroundColor Yellow
+				Get-NetAdapter | Format-Table Name, Status, LinkSpeed, MacAddress -AutoSize
+				Write-Host ""
+				Read-Host -Prompt "Press ENTER to return to menu"
+			}
+			"2" {
+				Write-Host "`n[2] IP Configuration (IPv4)" -ForegroundColor Yellow
+				Get-NetIPAddress -AddressFamily IPv4 | Format-Table InterfaceAlias, IPAddress, PrefixLength
+				Write-Host ""
+				Read-Host -Prompt "DONE! Press ENTER to return to menu"
+			}
+			"3" {
+				Write-Host "`n[3] Default Gateway" -ForegroundColor Yellow
+				$gateway = Get-NetRoute -DestinationPrefix "0.0.0.0/0" | Select-Object -First 1 -ExpandProperty NextHop
+				if ($gateway) {
+					Write-Host "Default Gateway: $gateway"
+					Write-Host ""
+					Read-Host -Prompt "Press ENTER to return to menu"
+				} else {
+					Write-Host "No default gateway found!" -ForegroundColor Red
+					Write-Host ""
+					Read-Host -Prompt "DONE! Press ENTER to return to menu"
+				}
+			}
+			"4" {
+				Write-Host "`n[4] DNS Resolution Test (google.com)" -ForegroundColor Yellow
+				try {
+					$resolved = Resolve-DnsName google.com -ErrorAction Stop
+					Write-Host "Resolved IP(s):" -ForegroundColor Green
+					$resolved.IPAddress
+					Write-Host ""
+					Read-Host -Prompt "DONE! Press ENTER to return to menu"
+				} catch {
+					Write-Host "DNS resolution failed!" -ForegroundColor Red
+					Write-Host ""
+					Read-Host -Prompt "DONE! Press ENTER to return to menu"
+				}
+			}
+			"5" {
+				Write-Host "`n[5] Ping Test" -ForegroundColor Yellow
+				$target = Read-Host "Enter host/IP to ping (default: 8.8.8.8)"
+				if ([string]::IsNullOrWhiteSpace($target)) { $target = "8.8.8.8" }
+				Test-Connection -ComputerName $target -Count 4
+				Write-Host ""
+				Read-Host -Prompt "DONE! Press ENTER to return to menu"
+			}
+			"6" {
+				Write-Host "`n[6] Traceroute" -ForegroundColor Yellow
+				$traceTarget = Read-Host "Enter host/IP for traceroute (default: 8.8.8.8)"
+				if ([string]::IsNullOrWhiteSpace($traceTarget)) { $traceTarget = "8.8.8.8" }
+				tracert $traceTarget
+				Write-Host ""
+				Read-Host -Prompt "DONE! Press ENTER to return to menu"
+			}
+			"7" {
+				Write-Host "`n[7] Performing Full Network Reset (FlushDNS + RegisterDNS + ReleaseIP + RenewIP)..." -ForegroundColor Yellow
+				ipconfig /flushdns
+				ipconfig /registerdns
+				ipconfig /release
+				ipconfig /renew
+				Write-Host ""
+				Read-Host -Prompt "DONE! Press ENTER to return to menu"
+			}
+			"0" { 
+				Write-Host ""
+				Write-Host "Returning to Main Menu..." -ForegroundColor Cyan
+				$running = $false
+			}
+			default {
+				Write-Host ""
+				Write-Host "Invalid selection. Please choose between 0–7." -ForegroundColor Red
+			}
+		}
+		if ($choice -ne "0") {
+			Write-Host ""
+			Write-Host "`nPress ENTER to return to menu..."
+			[void][System.Console]::ReadLine()
+		}
+	} while ($choice -ne "0")
+}
 function Run-DeletePersonalFolders {
 	Clear-Host
-	Write-Host "==============================================="
-	Write-Host "   DELETE FILES AND FOLDERS (v1.0)" -ForegroundColor Cyan
-	Write-Host "==============================================="
+	Write-Host "================================"
+	Write-Host "3. DELETE FILES AND FOLDERS v1.0" -ForegroundColor Cyan
+	Write-Host "================================"
 	# Display script information
 	Write-Host "⚠️  CAUTION!! This script will permanently delete ALL files and folders in the following locations:" -ForegroundColor Red
 	Write-Host "Downloads, Documents, Pictures, Videos, Music" -ForegroundColor Yellow
@@ -126,9 +229,9 @@ function Run-DeletePersonalFolders {
 }
 function Run-DeleteUserFolders {
 	Clear-Host
-	Write-Host "==============================================="
-	Write-Host "   DELETE USERS FOLDERS (v1.0)" -ForegroundColor Cyan
-	Write-Host "==============================================="
+	Write-Host "============================"
+	Write-Host "4. DELETE USERS FOLDERS v1.0" -ForegroundColor Cyan
+	Write-Host "============================"
 	# Display script information
 	Write-Host "⚠️  This script will DELETE user folders in C:\Users EXCEPT the following:" -ForegroundColor Red
 	Write-Host "    - Administrator" -ForegroundColor Yellow
@@ -190,9 +293,9 @@ function Run-DeleteUserFolders {
 }
 function Run-UninstallSoftware {
 	Clear-Host
-	Write-Host "==============================================="
-	Write-Host "   REMOVE INSTALLED SOFTWARE (v1.0)" -ForegroundColor Cyan
-	Write-Host "==============================================="
+	Write-Host "================================="
+	Write-Host "5. REMOVE INSTALLED SOFTWARE v1.0" -ForegroundColor Cyan
+	Write-Host "================================="
 	# Display script information
 	Write-Host "REMOVE INSTALLED SOFTWARE - This script will display all installed software and user need to choose which software to be uninstalled (batch)."
 	Write-Host ""
@@ -266,9 +369,9 @@ function Run-EnableDisableSeconds {
 	function Show-Menu {
 		
 		Clear-Host
-		Write-Host "==============================================="
-		Write-Host "   TASKBAR CLOCK SECONDS TOGGLE (v1.0)" -ForegroundColor Cyan
-		Write-Host "==============================================="
+		Write-Host "====================================="
+		Write-Host "6. TASKBAR CLOCK SECONDS TOGGLE v1.0" -ForegroundColor Cyan
+		Write-Host "====================================="
 		# Display script information
 		Write-Host "TOGGLE SECONDS - This script will enable or disable the seconds on the taskbar clock."
 		Write-Host ""
@@ -302,10 +405,12 @@ function Run-EnableDisableSeconds {
 			"1" { Enable-Seconds }
 			"2" { Disable-Seconds }
 			"0" { 
-				Write-Host "Exiting..." -ForegroundColor Cyan
+				Write-Host ""
+				Write-Host "Returning to Main Menu" -ForegroundColor Cyan
 				$running = $false
 			}
 			default { 
+				Write-Host ""
 				Write-Host "Invalid option. Please choose 1, 2, or 0." -ForegroundColor Red
 				Start-Sleep -Seconds 2
 			}
@@ -315,14 +420,15 @@ function Run-EnableDisableSeconds {
 $runMenu = $true
 do {
     Show-Menu
-    $choice = Read-Host "`nEnter your choice (1-6)"
+    $choice = Read-Host "`nEnter your choice (0-6)"
     switch ($choice) {
         "1" { Run-UserLaptopInfo }
-        "2" { Run-DeletePersonalFolders }
-        "3" { Run-DeleteUserFolders }
-        "4" { Run-UninstallSoftware }
-		"5" { Run-EnableDisableSeconds }
-        "6" { Write-Host "Exiting..."; $runMenu = $false }
+		"2" { Run-NetworkTools }
+        "3" { Run-DeletePersonalFolders }
+        "4" { Run-DeleteUserFolders }
+        "5" { Run-UninstallSoftware }
+		"6" { Run-EnableDisableSeconds }
+        "0" { Write-Host "Exiting the script..."; $runMenu = $false }
         default { Write-Host "Invalid selection. Try again." -ForegroundColor Yellow }
     }
 } while ($runMenu)
