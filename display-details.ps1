@@ -5,7 +5,7 @@ Write-Host "==============================================="
 # Display script information
 Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address). Then performing ping test to Azure AD (10.32.240.20)"
 Write-Host ""
-Read-Host "Press Enter to continue"
+Read-Host "Press enter to confirm and proceed..."
 Write-Host "Start retrieving all details:"
 Write-Host ""
 # Get user ID
@@ -25,7 +25,7 @@ $Model = (Get-WmiObject -Class Win32_ComputerSystem).Model
 Write-Host "Model			: $Model"
 
 $Serial = (Get-WmiObject Win32_BIOS).SerialNumber
-Write-Host "Serial Number		: $Serial"
+Write-Host "Serial Number	: $Serial"
 
 # Get Ethernet IPv4 address (non-APIPA)
 $IP = Get-NetIPAddress -AddressFamily IPv4 |
