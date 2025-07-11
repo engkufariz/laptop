@@ -41,7 +41,7 @@ function Run-UserLaptopInfo {
 	$Model = (Get-WmiObject -Class Win32_ComputerSystem).Model
 	Write-Host "Model			: $Model"
 	$Serial = (Get-WmiObject Win32_BIOS).SerialNumber
-	Write-Host "Serial Number	: $Serial"
+	Write-Host "Serial Number		: $Serial"
 	# Get Ethernet IPv4 address (non-APIPA)
 	$IP = Get-NetIPAddress -AddressFamily IPv4 |
 		  Where-Object {
