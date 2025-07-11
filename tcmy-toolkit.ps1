@@ -121,6 +121,7 @@ function Run-DeletePersonalFolders {
 	# End message
 	Write-Host ""
 	Write-Host "DONE! Deletion process completed. Log saved to: $logFile" -ForegroundColor Cyan
+ 	Write-Host ""
 	Read-Host "Press Enter to return to menu"
 }
 function Run-DeleteUserFolders {
@@ -185,6 +186,7 @@ function Run-DeleteUserFolders {
 		}
 	}
 	Write-Host "`n📝 Log saved to: $logPath" -ForegroundColor Cyan
+ 	Write-Host ""
 	Read-Host "Press Enter to return to menu"
 }
 function Run-UninstallSoftware {
@@ -248,7 +250,6 @@ function Run-UninstallSoftware {
 	}
 	# --- Main Execution ---
 	$softwareList = Get-InstalledSoftware
-
 	if ($softwareList.Count -eq 0) {
 		Write-Host "No uninstallable software found." -ForegroundColor Yellow
 		exit
@@ -259,6 +260,7 @@ function Run-UninstallSoftware {
 		exit
 	}
 	Uninstall-Software $selectedApps
+ 	Write-Host ""
 }
 $runMenu = $true
 do {
