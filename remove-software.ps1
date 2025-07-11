@@ -5,10 +5,13 @@ Write-Host "==============================================="
 # Display script information
 Write-Host "REMOVE INSTALLED SOFTWARE - This script will display all installed software and user need to choose which software to be uninstalled (batch)."
 Write-Host ""
-Read-Host "Press Enter to continue"
-Write-Host "Start retrieving all details:"
+$confirm = Read-Host "Type YES to confirm and proceed..."
+if ($confirm -ne "YES") {
+    Write-Host "Operation cancelled by user." -ForegroundColor Red
+    exit
+}
 Write-Host ""
-
+Write-Host "Start retrieving all details:"
 # Run as Administrator
 
 function Get-InstalledSoftware {
