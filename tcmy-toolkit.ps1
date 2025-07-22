@@ -5,11 +5,13 @@ function Show-Menu {
 	Write-Host "============================================================"
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
-	Write-Host "2. Basic Network Troubleshooting Tools"
-    Write-Host "3. Delete All Users Folders in C:\Users"
-    Write-Host "4. Delete Personal Folders (Downloads, Documents, etc.)"
-    Write-Host "5. Uninstall Installed Software (select manually)"
-	Write-Host "6. Toggle Seconds In Taskbar Clock"
+	Write-Host "2. Network Troubleshooting Tools"
+	Write-Host "3. System Troubleshooting Tools"
+	Write-Host "4. Domain Troubleshooting Tools"
+    Write-Host "5. Caution! - Delete All Users Folders in C:\Users"
+    Write-Host "6. Caution! - Delete Personal Folders (Downloads, Documents, etc.)"
+    Write-Host "7. Caution! - Uninstall Installed Software (select manually)"
+	Write-Host "8. Toggle Seconds In Taskbar Clock"
     Write-Host "0. Exit`n"
 }
 function Run-UserLaptopInfo {
@@ -64,11 +66,14 @@ function Run-NetworkTools {
 	function Show-Menu {
 		Clear-Host
 		Write-Host "=========================================="
-		Write-Host "2. BASIC NETWORK TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
+		Write-Host "2. NETWORK TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
 		Write-Host "=========================================="
+		# Display script information
+		Write-Host "NETWORK TROUBLESHOOTING TOOL - This script consist of several basic network troubleshooting tools as shown in the selection below:"
 		Write-Host ""
+		# Display menu selection
 		Write-Host "1. Check Network Adapter Status"
-		Write-Host "2. View IP Configuration"
+		Write-Host "2. Check IP Configuration"
 		Write-Host "3. Check Default Gateway"
 		Write-Host "4. DNS Resolution Test"
 		Write-Host "5. Ping Test (custom or 8.8.8.8)"
@@ -79,7 +84,7 @@ function Run-NetworkTools {
 	}
 	do {
 		Show-Menu
-		$choice = Read-Host "Select an option [0-8]"
+		$choice = Read-Host "Select an option [0-7]"
 		switch ($choice) {
 			"1" {
 				Write-Host "`n[1] Network Adapter Status" -ForegroundColor Yellow
@@ -156,6 +161,143 @@ function Run-NetworkTools {
 			default {
 				Write-Host ""
 				Write-Host "Invalid selection. Please choose between 0–7." -ForegroundColor Red
+			}
+		}
+		if ($choice -ne "0") {
+			[void][System.Console]::ReadLine()
+		}
+	} while ($choice -ne "0")
+}
+function Run-SystemTools {
+	function Show-Menu {
+		Clear-Host
+		Write-Host "=========================================="
+		Write-Host "3. SYSTEM TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
+		Write-Host "=========================================="
+		# Display script information
+		Write-Host "SYSTEM TROUBLESHOOTING TOOL - This script consist of several basic system troubleshooting tools as shown in the selection below:"
+		Write-Host ""
+		# Display menu selection
+		Write-Host "1. Check Basic System Overview (Uptime, Disk, CPU, RAM)"
+		Write-Host "2. Selection On System Diagnostic (Incomplete)"
+		Write-Host "3. Selection On Disk Tools (Incomplete)"
+		Write-Host "4.  (Incomplete)"
+		Write-Host "5.  (Incomplete)"
+		Write-Host "6. Open Task Manager (Admin)"
+		Write-Host "7. Open Event Viewer (Admin)"
+		Write-Host "0. Return To Main Menu"
+		Write-Host ""
+	}
+	do {
+		Show-Menu
+		$choice = Read-Host "Select an option [0-7]"
+		switch ($choice) {
+			"1" {
+            # Uptime
+            $lastBoot = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+            $uptime = (Get-Date) - $lastBoot
+            Write-Host "`n--- System Uptime ---"
+            Write-Host "Uptime: $([math]::floor($uptime.TotalDays)) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes"
+			# Disk Usage
+            Write-Host "`n--- Disk Usage ---"
+            Get-PSDrive -PSProvider FileSystem | Format-Table Name, `
+                @{Label="Used(GB)";Expression={[math]::round($_.Used / 1GB, 2)}}, `
+                @{Label="Free(GB)";Expression={[math]::round($_.Free / 1GB, 2)}}
+			# CPU Usage
+            Write-Host "`n--- CPU Usage ---"
+            Get-CimInstance Win32_Processor | Select-Object Name, LoadPercentage | Format-Table
+			# Memory Usage
+            Write-Host "`n--- Memory Usage ---"
+            $mem = Get-CimInstance Win32_OperatingSystem
+            $total = [math]::round($mem.TotalVisibleMemorySize / 1MB, 2)
+            $free = [math]::round($mem.FreePhysicalMemory / 1MB, 2)
+            $used = [math]::round($total - $free, 2)
+            Write-Host "Total RAM: $total GB"
+            Write-Host "Used RAM:  $used GB"
+            Write-Host "Free RAM:  $free GB"
+            Write-Host ""
+			Read-Host -Prompt "DONE! Press ENTER to return to menu"
+        }
+			"2" {
+			}
+			"3" {
+			}
+			"4" {
+			}
+			"5" {
+			}
+			"6" { Start-Process taskmgr }
+			"7" { Start-Process eventvwr }
+			"0" { 
+				Write-Host ""
+				Write-Host "Returning to Main Menu..." -ForegroundColor Cyan
+				$running = $false
+			}
+			default {
+				Write-Host ""
+				Write-Host "Invalid selection. Please choose between 0–7." -ForegroundColor Red
+			}
+		}
+		if ($choice -ne "0") {
+			[void][System.Console]::ReadLine()
+		}
+	} while ($choice -ne "0")
+}
+function Run-DomainTools {
+	function Show-Menu {
+		Clear-Host
+		Write-Host "=========================================="
+		Write-Host "3. DOMAIN TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
+		Write-Host "=========================================="
+		# Display script information
+		Write-Host "DOMAIN TROUBLESHOOTING TOOL - This script consist of several basic domain troubleshooting tools as shown in the selection below:"
+		Write-Host ""
+		# Display menu selection
+		Write-Host "1. Fix Trust Relationship with Domain"
+		Write-Host "2.  (Incomplete)"
+		Write-Host "3.  (Incomplete)"
+		Write-Host "4.  (Incomplete)"
+		Write-Host "5.  (Incomplete)"
+		Write-Host "0. Return To Main Menu"
+		Write-Host ""
+	}
+	do {
+		Show-Menu
+		$choice = Read-Host "Select an option [0-5]"
+		switch ($choice) {
+			 "1" {
+				Clear-Host
+				Write-Host "`n⚠️  This will attempt to fix the secure channel using domain credentials." -ForegroundColor Yellow
+				Write-Host "1. You MUST run this script as Administrator."
+				Write-Host "2. Computer must be connected to the corporate network."
+				$domainUser = Read-Host "`nEnter domain admin username (e.g. DOMAIN\\Administrator)"
+				$securePass = Read-Host "Enter password" -AsSecureString
+				try {
+					$cred = New-Object System.Management.Automation.PSCredential($domainUser, $securePass)
+					Reset-ComputerMachinePassword -Credential $cred
+					Write-Host "`n✅ Trust relationship has been reset successfully. Please restart your PC." -ForegroundColor Green
+				}
+				catch {
+					Write-Host "`n❌ Failed to reset trust relationship. Check credentials or domain connectivity." -ForegroundColor Red
+				}
+				Pause
+			}
+			"2" {
+			}
+			"3" {
+			}
+			"4" {
+			}
+			"5" {
+			}
+			"0" { 
+				Write-Host ""
+				Write-Host "Returning to Main Menu..." -ForegroundColor Cyan
+				$running = $false
+			}
+			default {
+				Write-Host ""
+				Write-Host "Invalid selection. Please choose between 0–5." -ForegroundColor Red
 			}
 		}
 		if ($choice -ne "0") {
@@ -421,14 +563,16 @@ function Run-EnableDisableSeconds {
 $runMenu = $true
 do {
     Show-Menu
-    $choice = Read-Host "`nEnter your choice (0-6)"
+    $choice = Read-Host "`nEnter your choice (0-8)"
     switch ($choice) {
         "1" { Run-UserLaptopInfo }
 		"2" { Run-NetworkTools }
-        "3" { Run-DeletePersonalFolders }
-        "4" { Run-DeleteUserFolders }
-        "5" { Run-UninstallSoftware }
-		"6" { Run-EnableDisableSeconds }
+		"3" { Run-SystemTools }
+		"4" { Run-DomainTools }
+        "5" { Run-DeletePersonalFolders }
+        "6" { Run-DeleteUserFolders }
+        "7" { Run-UninstallSoftware }
+		"8" { Run-EnableDisableSeconds }
         "0" { Write-Host "Exiting the script..."; $runMenu = $false }
         default { Write-Host "Invalid selection. Try again." -ForegroundColor Yellow }
     }
