@@ -1,8 +1,8 @@
 function Show-Menu {
     Clear-Host
-	Write-Host "============================================================"
-	Write-Host "		TCMY TOOLKIT - created by Fariz			"	-ForegroundColor Cyan
-	Write-Host "============================================================"
+	Write-Host "================="
+	Write-Host "TCMY TOOLKIT 2025"-ForegroundColor Cyan
+	Write-Host "================="
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
 	Write-Host "2. Network Troubleshooting Tools"
@@ -17,11 +17,10 @@ function Show-Menu {
 function Run-UserLaptopInfo {
 	Clear-Host
     Write-Host "================================="
-	Write-Host "1. USER + LAPTOP INFO SCRIPT v1.0" -ForegroundColor Cyan
+	Write-Host "1. USER & LAPTOP INFO SCRIPT v1.0" -ForegroundColor Cyan
 	Write-Host "================================="
 	# Display script information
-	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address)."
- 	Write-Host "Then performing ping test to Azure AD (10.32.240.20)."
+	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address). Then performing ping test to Azure AD (10.32.240.20)."
 	Write-Host ""
 	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
 	if ($confirm -ne "YES") {
@@ -66,9 +65,9 @@ function Run-UserLaptopInfo {
 function Run-NetworkTools {
 	function Show-Menu {
 		Clear-Host
-		Write-Host "=========================================="
+		Write-Host "===================================="
 		Write-Host "2. NETWORK TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
-		Write-Host "=========================================="
+		Write-Host "===================================="
 		# Display script information
 		Write-Host "NETWORK TROUBLESHOOTING TOOL - This script consist of several basic network troubleshooting tools as shown in the selection below:"
 		Write-Host ""
@@ -172,9 +171,9 @@ function Run-NetworkTools {
 function Run-SystemTools {
 	function Show-Menu {
 		Clear-Host
-		Write-Host "=========================================="
+		Write-Host "==================================="
 		Write-Host "3. SYSTEM TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
-		Write-Host "=========================================="
+		Write-Host "==================================="
 		# Display script information
 		Write-Host "SYSTEM TROUBLESHOOTING TOOL - This script consist of several basic system troubleshooting tools as shown in the selection below:"
 		Write-Host ""
@@ -247,9 +246,9 @@ function Run-SystemTools {
 function Run-DomainTools {
 	function Show-Menu {
 		Clear-Host
-		Write-Host "=========================================="
+		Write-Host "==================================="
 		Write-Host "3. DOMAIN TROUBLESHOOTING TOOL v1.0" -ForegroundColor Cyan
-		Write-Host "=========================================="
+		Write-Host "==================================="
 		# Display script information
 		Write-Host "DOMAIN TROUBLESHOOTING TOOL - This script consist of several basic domain troubleshooting tools as shown in the selection below:"
 		Write-Host ""
@@ -513,9 +512,9 @@ function Run-EnableDisableSeconds {
 	function Show-Menu {
 		
 		Clear-Host
-		Write-Host "====================================="
+		Write-Host "===================================="
 		Write-Host "6. TASKBAR CLOCK SECONDS TOGGLE v1.0" -ForegroundColor Cyan
-		Write-Host "====================================="
+		Write-Host "===================================="
 		# Display script information
 		Write-Host "TOGGLE SECONDS - This script will enable or disable the seconds on the taskbar clock."
 		Write-Host ""
