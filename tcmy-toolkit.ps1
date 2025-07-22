@@ -4,7 +4,7 @@ function Show-Menu {
 	Write-Host "		TCMY TOOLKIT 2025		"-ForegroundColor Cyan
 	Write-Host "============================================"
 	Write-Host ""
-	Write-Host "`n1. Show User + Laptop Info"
+	Write-Host "`n1. Show User & Laptop Info"
 	Write-Host "2. Network Troubleshooting Tools"
 	Write-Host "3. System Troubleshooting Tools"
 	Write-Host "4. Domain Troubleshooting Tools"
