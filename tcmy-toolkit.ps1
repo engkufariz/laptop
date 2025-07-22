@@ -20,7 +20,8 @@ function Run-UserLaptopInfo {
 	Write-Host "1. USER + LAPTOP INFO SCRIPT v1.0" -ForegroundColor Cyan
 	Write-Host "================================="
 	# Display script information
-	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address). Then performing ping test to Azure AD (10.32.240.20)"
+	Write-Host "DISPLAY USER AND LAPTOP DETAILS - This script will display details of USER (ID and full name) and LAPTOP (hostname, model, serial number, and IP address)."
+ 	Write-Host "Then performing ping test to Azure AD (10.32.240.20)."
 	Write-Host ""
 	$confirm = Read-Host "Type YES to confirm and proceed, or NO to return to menu"
 	if ($confirm -ne "YES") {
