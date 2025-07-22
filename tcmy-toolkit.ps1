@@ -1,8 +1,8 @@
 function Show-Menu {
     Clear-Host
-	Write-Host "================="
-	Write-Host "TCMY TOOLKIT 2025"-ForegroundColor Cyan
-	Write-Host "================="
+	Write-Host "============================================"
+	Write-Host "		TCMY TOOLKIT 2025		"-ForegroundColor Cyan
+	Write-Host "============================================"
 	Write-Host ""
 	Write-Host "`n1. Show User + Laptop Info"
 	Write-Host "2. Network Troubleshooting Tools"
