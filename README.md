@@ -74,8 +74,7 @@ iwr 'https://tinyurl.com/tcmy-toolkit' | iex
 
 ## ✍️ Author
 
-Developed by **Engku Ahmad Fariz** for TCMY IT Department usage
-📧 For support, bug reports, or improvements — please open a GitHub issue.
+Developed by **Engku Ahmad Fariz** for TCMY IT Department usage only!
 
 ---
 
